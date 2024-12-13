@@ -1,0 +1,37 @@
+version: '3.8'
+
+networks:
+  my-network:
+    driver: bridge
+
+services:
+  bank-app:
+    image: bank-app:1.0
+    container_name: bankApp
+    networks:
+      - my-network
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-bank:5432/rabobank
+      SPRING_DATASOURCE_USERNAME: rabo
+      SPRING_DATASOURCE_PASSWORD: rabo
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-bank
+
+  postgres-bank:
+    image: postgres:13-alpine
+    container_name: postgresBank
+    networks:
+      - my-network
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: rabo
+      POSTGRES_PASSWORD: rabo
+      POSTGRES_DB: rabobank
+      POSTGRES_PORT: 5432
