@@ -62,7 +62,7 @@ class AccountControllerIntegrationTest {
     @WithMockUser(roles = "USER")  // Mock a user with the 'USER' role
     void testTransferMoney() throws Exception {
         TransferRequestDTO requestDTO = new TransferRequestDTO("ACC1", "ACC2", BigDecimal.valueOf(200));
-        TransferResponseDTO responseDTO = new TransferResponseDTO(1L, 1L, 2L, BigDecimal.valueOf(200),
+        TransferResponseDTO responseDTO = new TransferResponseDTO(1L, "ACC1", "ACC2", BigDecimal.valueOf(200),
                 BigDecimal.valueOf(500), BigDecimal.valueOf(1200), "Transfer successful");
         when(accountService.transferMoney(any(TransferRequestDTO.class))).thenReturn(responseDTO);
 
@@ -72,8 +72,8 @@ class AccountControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.statusMessage").value("Transfer successful"))
-                .andExpect(jsonPath("$.fromAccountId").value(1))
-                .andExpect(jsonPath("$.toAccountId").value(2))
+                .andExpect(jsonPath("$.fromAccountNumber").value("ACC1"))
+                .andExpect(jsonPath("$.toAccountNumber").value("ACC2"))
                 .andExpect(jsonPath("$.amount").value(200))
                 .andExpect(jsonPath("$.fromAccountBalance").value(500))
                 .andExpect(jsonPath("$.toAccountBalance").value(1200));
@@ -83,7 +83,7 @@ class AccountControllerIntegrationTest {
     @WithMockUser(roles = "USER")  // Mock a user with the 'USER' role
     void testWithdrawMoney() throws Exception {
         WithdrawRequestDTO requestDTO = new WithdrawRequestDTO("ACC1", BigDecimal.valueOf(300));
-        WithdrawalResponseDTO responseDTO = new WithdrawalResponseDTO(1L, 1L, BigDecimal.valueOf(300),
+        WithdrawalResponseDTO responseDTO = new WithdrawalResponseDTO(1L, "ACC1", BigDecimal.valueOf(300),
                 BigDecimal.valueOf(200), "Withdrawal successful");
         when(accountService.withdrawMoney(any(WithdrawRequestDTO.class))).thenReturn(responseDTO);
 
@@ -93,7 +93,7 @@ class AccountControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.statusMessage").value("Withdrawal successful"))
-                .andExpect(jsonPath("$.accountId").value(1))
+                .andExpect(jsonPath("$.accountNumber").value("ACC1"))
                 .andExpect(jsonPath("$.amount").value(300))
                 .andExpect(jsonPath("$.remainingBalance").value(200));
     }
